@@ -1,9 +1,9 @@
 #include <string>
 using namespace std;
 
-const string RESET, BLUE, MAG, CYAN;
+extern const string RESET, BLUE, MAG, CYAN; 
 
-void enableVTMode(); // função para habilitar cores ANSI no Windows
-string colorir(); 
+string colorir(); // função para colorir strings
 void print_frames(); // função para mostrar os frames
-
+void cls(); // função para limpar a tela
+void print_titulo(); // função para printar o titulo do simulador
