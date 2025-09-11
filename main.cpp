@@ -1,15 +1,22 @@
+#include "simulacao.h"
+#include "util.h"
 #include <iostream>
+#include <vector>
+#include <string>
 using namespace std;
 
 int main() {
+    // inicialização de variáveis
+    vector<Acesso> sequencia;
+    int frames = 0, num_procs = 1;
+    Algoritmo alg = FIFO;
+    Modo modo = GLOBAL;
+    string linha;
+
     while(true)
     {
-        system("cls");
-        cout << R"(
-         _____ _           _       _              _        _____                   _        _____ _     _           _
-        |   __|_|_____ _ _| |___ _| |___ ___    _| |___   |     |___ _____ ___ ___|_|___   |  |  |_|___| |_ _ _ ___| |
-        |__   | |     | | | | .'| . | . |  _|  | . | -_|  | | | | -_|     | . |  _| | .'|  |  |  | |  _|  _| | | .'| |
-        |_____|_|_|_|_|___|_|__,|___|___|_|    |___|___|  |_|_|_|___|_|_|_|___|_| |_|__,|   \___/|_|_| |_| |___|__,|_|)";
+        cls();
+        print_titulo();
     
         cout << "\n\n\n";
         cout << " 1) Inserir sequencia de acessos as paginas\n\n"
@@ -30,19 +37,44 @@ int main() {
         cin >> op;
         switch (op)
         {
-        case 1:
-            break;
-        case 2:
-            break;
-        case 3:     
-            break;
-        case 4: 
-            break;
-        case 5:
-            break;
         case 0:
             cout << " Saindo...\n";
             return 0;
+
+        case 1:
+            cout << " Digite a sequencia: ";
+            linha.clear();
+            getline(cin, linha);
+            sequencia.clear();
+            break;
+
+        case 2:
+            cout << " Digite o numero de frames: ";
+            cin >> frames; cin.ignore();
+            break;
+
+        case 3:  
+            cout << " Escolha o algoritmo (0 = FIFO  1 = OPTIMAL  2 = CLOCK): ";
+            int a;
+            cin >> a; cin.ignore();
+            break;
+
+        case 4: 
+            cout << " Escolha o modo (0 = GLOBAL  1 = LOCAL): ";
+            int m;
+            cin >> m; cin.ignore();
+            if(m==0){
+                modo = GLOBAL; 
+                num_procs = 1;
+            } else {
+                modo = LOCAL;
+                cout << " Numero de processos: ";
+                cin >> num_procs; cin.ignore();
+            }
+            break;
+
+        case 5:
+            break;
         default:
             break;
         }
