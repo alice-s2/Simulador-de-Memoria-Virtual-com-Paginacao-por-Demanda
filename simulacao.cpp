@@ -101,3 +101,36 @@ bool parse_token(const string &tok, Acesso &a)
     a.write = write;
     return true;
 }
+
+// ---- Simulação ----
+void run_simulation(const vector<Acesso> &seq, int total_frames, Modo modo, Algoritmo alg, int num_procs)
+{
+    vector<Frame> frames(total_frames);
+    vector<int> proc_frames(num_procs + 1, 0);
+    vector<int> proc_start(num_procs + 1, 0);
+
+    if (modo == LOCAL)
+    {
+        int base = total_frames / num_procs;
+        int rem = total_frames % num_procs;
+        int cur = 0;
+        for (int p = 1; p <= num_procs; ++p)
+        {
+            proc_frames[p] = base + (p <= rem ? 1 : 0);
+            proc_start[p] = cur;
+            cur += proc_frames[p];
+        }
+    }
+    else
+    {
+        proc_frames[1] = total_frames;
+        proc_start[1] = 0;
+    }
+
+    queue<int> fifo_q;
+    vector<int> clock_ptr(num_procs + 1, 0);
+
+    int hits = 0, faults = 0, page_outs = 0;
+    bool auto_run = false;
+
+}
