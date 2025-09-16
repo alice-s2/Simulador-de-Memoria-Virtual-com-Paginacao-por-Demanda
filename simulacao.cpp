@@ -1,8 +1,11 @@
-#include "simulacao.h"
 #include "util.h"
 #include <vector>
 #include <queue>
 #include <climits>
+#include <iostream>
+#include <thread>
+#include <chrono>
+#include <iomanip>
 
 using namespace std;
 
@@ -194,5 +197,54 @@ void run_simulation(const vector<Acesso> &seq, int total_frames, Modo modo, Algo
             fifo_q.push(victim);
             newp = victim;
         }
+
+        // Exibição
+        cls();
+        print_titulo();
+        cout << "\n\n\n Passo " << idx + 1 << "/" << seq.size()
+             << " -> Acesso: P" << ac.pid << ":" << ac.page << (ac.write ? "(W)" : "(R)") << "\n";
+        cout << " Faults = " << faults << "  Hits = " << hits << "  Page-Outs = " << page_outs << "\n\n";
+        print_frames(frames, pool_start, pool_len, replaced, hit, newp);
+
+        cout << " \n Sequencia: ";
+        for (size_t i = 0; i < seq.size(); ++i)
+        {
+            string tok = to_string(seq[i].pid) + ":" + to_string(seq[i].page) + (seq[i].write ? "W" : "R");
+            if (i == idx)
+                cout << colorir(tok, CYAN) << " ";
+            else
+                cout << tok << " ";
+        }
+        cout << "\n          ";
+        for (size_t i = 0; i < seq.size(); ++i)
+        {
+            if (i == idx)
+                cout << " ^    ";
+            else
+                cout << "     ";
+        }
+        cout << "\n";
+
+        if (!auto_run)
+        {
+            cout << " [n] proximo | [a] auto | [r] sair\n > ";
+            char cmd;
+            cin >> cmd;
+            if (cmd == 'a')
+                auto_run = true;
+            if (cmd == 'r')
+                return;
+        }
+        else
+        {
+            this_thread::sleep_for(chrono::milliseconds(200));
+        }
     }
+
+    cout << "\n ---------------- Resultado Final ---------------- \n\n";
+    cout << " Total acessos: " << seq.size() << "\n";
+    cout << " Faults: " << faults << " | Hits: " << hits << " | Page-Outs: " << page_outs << "\n";
+    cout << " Taxa de falhas: " << fixed << setprecision(2) << (100.0 * faults / seq.size()) << "%\n";
+    cin.ignore();
+    cin.get();
 }
