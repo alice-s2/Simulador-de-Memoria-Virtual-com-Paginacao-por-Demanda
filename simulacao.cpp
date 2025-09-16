@@ -69,3 +69,35 @@ int choose_victim_clock(vector<Frame> &frames, int &ptr, int start, int len)
         }
     }
 }
+
+bool parse_token(const string &tok, Acesso &a)
+{
+    string t = tok;
+    bool write = false;
+    if (!t.empty() && (t.back() == 'W' || t.back() == 'w'))
+    {
+        write = true;
+        t.pop_back();
+    }
+    if (!t.empty() && (t.back() == 'R' || t.back() == 'r'))
+    {
+        write = false;
+        t.pop_back();
+    }
+    size_t p = t.find(':');
+    int pid = 1;
+    string page_s;
+    if (p == string::npos)
+        page_s = t;
+    else
+    {
+        pid = stoi(t.substr(0, p));
+        page_s = t.substr(p + 1);
+    }
+    if (page_s.empty())
+        return false;
+    a.pid = pid;
+    a.page = stoi(page_s);
+    a.write = write;
+    return true;
+}
