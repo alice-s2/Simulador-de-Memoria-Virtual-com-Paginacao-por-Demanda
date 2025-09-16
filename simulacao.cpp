@@ -133,4 +133,66 @@ void run_simulation(const vector<Acesso> &seq, int total_frames, Modo modo, Algo
     int hits = 0, faults = 0, page_outs = 0;
     bool auto_run = false;
 
+    for (size_t idx = 0; idx < seq.size(); ++idx)
+    {
+        const Acesso &ac = seq[idx];
+
+        int pool_start, pool_len;
+        if (modo == GLOBAL)
+        {
+            pool_start = proc_start[1];
+            pool_len = proc_frames[1];
+        }
+        else
+        {
+            pool_start = proc_start[ac.pid];
+            pool_len = proc_frames[ac.pid];
+        }
+
+        int found = find_frame(frames, pool_start, pool_len, ac.pid, ac.page);
+        int replaced = -1, hit = -1, newp = -1;
+
+        if (found != -1)
+        {
+            // HIT
+            ++hits;
+            frames[found].refbit = true;
+            if (ac.write)
+                frames[found].dirty = true;
+            hit = found;
+        }
+        else
+        {
+            // FAULT
+            ++faults;
+            int victim = -1;
+            // procura frame livre no pool
+            for (int i = pool_start; i < pool_start + pool_len; ++i)
+                if (!frames[i].valid)
+                {
+                    victim = i;
+                    break;
+                }
+            if (victim == -1)
+            {
+                if (alg == FIFO)
+                    victim = choose_victim_fifo(fifo_q, frames, pool_start, pool_len);
+                else if (alg == OPTIMAL)
+                    victim = choose_victim_optimal(frames, seq, (int)idx, pool_start, pool_len);
+                else if (alg == CLOCK)
+                    victim = choose_victim_clock(frames, clock_ptr[(modo == GLOBAL ? 1 : ac.pid)], pool_start, pool_len);
+            }
+            replaced = victim;
+            if (frames[victim].valid && frames[victim].dirty)
+                ++page_outs;
+
+            frames[victim].pid = ac.pid;
+            frames[victim].page = ac.page;
+            frames[victim].valid = true;
+            frames[victim].dirty = ac.write;
+            frames[victim].refbit = true;
+            fifo_q.push(victim);
+            newp = victim;
+        }
+    }
 }
