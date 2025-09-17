@@ -219,7 +219,7 @@ void run_simulation(const vector<Acesso> &seq, int total_frames, Modo modo, Algo
         for (size_t i = 0; i < seq.size(); ++i)
         {
             if (i == idx)
-                cout << " ^    ";
+                cout << "  ^    ";
             else
                 cout << "     ";
         }
