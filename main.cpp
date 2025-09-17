@@ -29,8 +29,15 @@ int main()
              << " 0) Sair\n\n"
              << " ---------------------------------------------------------------------------------------------------------------------\n\n";
 
-        cout << " Sequencia: " << (tem_seq ? "[ok]" : "[x]") << "\n"
-             << " Frames: " << (tem_frames ? to_string(frames) : "[x]") << "\n"
+        
+        cout << " Sequencia: ";
+        if (tem_seq) { 
+            for (auto &a : sequencia) {
+                cout << a.pid << ":" << a.page << (a.write ? "W " : "R "); 
+            }
+            cout << "\n";
+        } else { cout << "[x]\n"; }
+        cout << " Frames: " << (tem_frames ? to_string(frames) : "[x]") << "\n"
              << " Algoritmo: " << (tem_alg ? (alg == FIFO ? "FIFO" 
                                            : alg == OPTIMAL ? "OPTIMAL"
                                            : alg == CLOCK ? "CLOCK" : "-") : "[x]") << "\n"; 
